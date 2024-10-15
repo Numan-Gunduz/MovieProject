@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieProject.Context;
 
@@ -11,9 +12,11 @@ using MovieProject.Context;
 namespace MovieProject.Migrations
 {
     [DbContext(typeof(MovieContext))]
-    partial class MovieContextModelSnapshot : ModelSnapshot
+    [Migration("20241015141318_mig_movieGenres")]
+    partial class mig_movieGenres
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,6 +24,21 @@ namespace MovieProject.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("MovieGenre", b =>
+                {
+                    b.Property<int>("MovieId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("GenreId")
+                        .HasColumnType("int");
+
+                    b.HasKey("MovieId", "GenreId");
+
+                    b.HasIndex("GenreId");
+
+                    b.ToTable("MovieGenres");
+                });
 
             modelBuilder.Entity("MovieProject.Models.Genre", b =>
                 {
@@ -58,6 +76,10 @@ namespace MovieProject.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Genre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(max)");
 
@@ -90,29 +112,7 @@ namespace MovieProject.Migrations
                     b.ToTable("Movies");
                 });
 
-            modelBuilder.Entity("MovieProject.Models.MovieGenre", b =>
-                {
-                    b.Property<int>("MovieId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("GenreId")
-                        .HasColumnType("int");
-
-                    b.HasKey("MovieId", "GenreId");
-
-                    b.HasIndex("GenreId");
-
-                    b.ToTable("MovieGenres");
-                });
-
-            modelBuilder.Entity("MovieProject.Models.Genre", b =>
-                {
-                    b.HasOne("MovieProject.Models.Movie", null)
-                        .WithMany("Genres")
-                        .HasForeignKey("MovieID");
-                });
-
-            modelBuilder.Entity("MovieProject.Models.MovieGenre", b =>
+            modelBuilder.Entity("MovieGenre", b =>
                 {
                     b.HasOne("MovieProject.Models.Genre", "Genre")
                         .WithMany("MovieGenres")
@@ -129,6 +129,13 @@ namespace MovieProject.Migrations
                     b.Navigation("Genre");
 
                     b.Navigation("Movie");
+                });
+
+            modelBuilder.Entity("MovieProject.Models.Genre", b =>
+                {
+                    b.HasOne("MovieProject.Models.Movie", null)
+                        .WithMany("Genres")
+                        .HasForeignKey("MovieID");
                 });
 
             modelBuilder.Entity("MovieProject.Models.Genre", b =>

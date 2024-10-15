@@ -1,25 +1,53 @@
-﻿@model List<MovieProject.Models.MovieApiResponse>
+﻿@model IEnumerable<MovieProject.Models.Movie>
 
 @{
-    ViewData["Title"] = "Top Movies";
+    ViewBag.Title = "Movies List";
 }
 
-<h1>Top Movies</h1>
+<h1>Movies List</h1>
+<a asp-action="Fetch" class="btn btn-warning">Fetch Movies from API</a>
 
-<div class="row">
-    @foreach (var movie in Model)
-    {
-        <div class="col-md-3">
-            <div class="card">
-                <img src="@movie.Image" class="card-img-top" alt="@movie.Title" />
-                <div class="card-body">
-                    <h5 class="card-title">@movie.Title</h5>
-                    <p class="card-text">@movie.Description</p>
-                    <p><strong>Rating:</strong> @movie.Rating</p>
-                    <p><strong>Year:</strong> @movie.Year</p>
-                    <a href="@movie.ImdbLink" class="btn btn-primary">View on IMDB</a>
-                </div>
-            </div>
-        </div>
-    }
-</div>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Rating</th>
+            <th>Year</th>
+            <th>Image</th>
+            <th>Thumbnail</th>
+            <th>Genres</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var movie in Model)
+        {
+            <tr>
+                <td>@movie.Title</td>
+                <td>@movie.Description</td>
+                <td>@movie.Rating</td>
+                <td>@movie.Year</td>
+                <td>
+                    <img src="@movie.Image" alt="Movie Image" style="max-width: 100px; max-height: 150px;" />
+                </td>
+                <td>
+                    <img src="@movie.Thumbnail" alt="Movie Thumbnail" style="max-width: 50px; max-height: 75px;" />
+                </td>
+                <td>
+                    @foreach (var genre in movie.Genres)
+                    {
+                        <span>@genre.GenreName</span>
+                        @* Türleri listeleme *@
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@movie.MovieID" class="btn btn-primary">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@movie.MovieID" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Create" class="btn btn-success">Add New Movie</a>

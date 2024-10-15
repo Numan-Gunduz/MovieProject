@@ -1,0 +1,25 @@
+﻿@model MovieProject.Models.Movie
+
+@{
+    ViewBag.Title = "Delete Movie";
+}
+
+<h1>Delete Movie</h1>
+
+<div>
+    <h3>Are you sure you want to delete this movie?</h3>
+    <div>
+        <h4>@Model.Title</h4>
+        <p><strong>Description:</strong> @Model.Description</p>
+        <p><strong>Rating:</strong> @Model.Rating</p>
+        <p><strong>Year:</strong> @Model.Year</p>
+        <img src="@Model.Image" alt="Movie Image" style="max-width: 100px; max-height: 150px;" />
+        <p><strong>Thumbnail:</strong> <img src="@Model.Thumbnail" alt="Movie Thumbnail" style="max-width: 50px; max-height: 75px;" /></p>
+    </div>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="MovieID" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-action="Index" class="btn btn-secondary">Back</a>
+    </form>
+</div>

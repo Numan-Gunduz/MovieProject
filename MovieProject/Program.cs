@@ -8,6 +8,7 @@ builder.Services.AddDbContext<MovieContext>(options => options.UseSqlServer(
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<MovieService>();
+builder.Services.AddScoped<MovieService>(); // Ekleniyor
 
 
 var app = builder.Build();

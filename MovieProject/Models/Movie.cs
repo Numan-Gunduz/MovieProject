@@ -1,14 +1,29 @@
-﻿namespace MovieProject.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
+
+namespace MovieProject.Models
 {
     public class Movie
     {
-        public int MovieId { get; set; }             // Film ID
-        public string MovieName { get; set; }           // Film adı
-        public string Director { get; set; }     // Yönetmen
-        public double Metascore { get; set; }       // Metascore değeri
-        public DateTime ReleaseDate { get; set; } // Yayın tarihi
-                                                  // İlişki: Bir film birden fazla türle ilişkilendirilebilir
-        public ICollection<Genre> Genres { get; set; } // Film ile Tür ilişkisi
+        [Key]
+        public int MovieID { get; set; }
+        public int? Rank { get; set; }
+        public string? Title { get; set; }
+        public string? Description { get; set; }
+        public string? Image { get; set; }
+        public string? BigImage { get; set; }
+        public string? Thumbnail { get; set; }
+        public double? Rating { get; set; }
+        public string? Id { get; set; }
+        public int? Year { get; set; }
+        public string? ImdbId { get; set; }
+        public string? ImdbLink { get; set; }
 
+        // Çoktan çoğa ilişki için köprü tablo
+        public ICollection<MovieGenre> MovieGenres { get; set; } = new List<MovieGenre>();
+        public ICollection<Genre> Genres { get; set; } = new List<Genre>();
+
+        // Alternatif olarak direkt tür listesi
+        // public ICollection<Genre> Genres { get; set; } = new List<Genre>();
     }
 }
