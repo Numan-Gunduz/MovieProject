@@ -1,0 +1,25 @@
+﻿@model List<MovieProject.Models.MovieApiResponse>
+
+@{
+    ViewData["Title"] = "Top Movies";
+}
+
+<h1>Top Movies</h1>
+
+<div class="row">
+    @foreach (var movie in Model)
+    {
+        <div class="col-md-3">
+            <div class="card">
+                <img src="@movie.Image" class="card-img-top" alt="@movie.Title" />
+                <div class="card-body">
+                    <h5 class="card-title">@movie.Title</h5>
+                    <p class="card-text">@movie.Description</p>
+                    <p><strong>Rating:</strong> @movie.Rating</p>
+                    <p><strong>Year:</strong> @movie.Year</p>
+                    <a href="@movie.ImdbLink" class="btn btn-primary">View on IMDB</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

@@ -1,11 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using MovieProject.Context;
+using MovieProject.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<MovieContext>(options => options.UseSqlServer(
     builder.Configuration.GetConnectionString("DefaultConnectionString")));
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient<MovieService>();
+
 
 var app = builder.Build();
 
@@ -18,6 +21,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -27,6 +31,6 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Movie}/{action=Index}/{id?}");
 
 app.Run();
