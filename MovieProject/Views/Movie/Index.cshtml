@@ -1,21 +1,37 @@
 ﻿@model IEnumerable<MovieProject.Models.Movie>
 
 @{
-    ViewBag.Title = "Movies List";
+    ViewBag.Title = "Movies";
 }
 
-<h1>Movies List</h1>
-<a asp-action="Fetch" class="btn btn-warning">Fetch Movies from API</a>
+<h1>Movies</h1>
 
-<table class="table table-striped">
+<!-- Fetch Movies Butonu -->
+<button class="btn btn-primary" onclick="location.href='@Url.Action("FetchMovies", "Movie")'">Fetch Movies</button>
+<br />
+<br />
+
+<!-- Türleri Listele -->
+<h2>Genres</h2>
+<ul id="genreList">
+    @foreach (var genre in ViewBag.Genres)
+    {
+        <li>
+            <a href="#" onclick="filterMoviesByGenre(@genre.GenreId)">@genre.GenreName</a>
+        </li>
+    }
+</ul>
+
+<table class="table" id="movieTable">
     <thead>
         <tr>
+            <th>Image</th>
             <th>Title</th>
             <th>Description</th>
             <th>Rating</th>
             <th>Year</th>
-            <th>Image</th>
-            <th>Thumbnail</th>
+            <th>IMDB ID</th>
+            <th>IMDB Link</th>
             <th>Genres</th>
             <th>Actions</th>
         </tr>
@@ -23,31 +39,51 @@
     <tbody>
         @foreach (var movie in Model)
         {
-            <tr>
+            <tr class="movieRow" data-genres='@Html.Raw(Json.Serialize(movie.MovieGenres.Select(mg => mg.GenreId)))'>
+                <td>
+                    <img src="@movie.Image" alt="@movie.Title" style="width: 100px; height: auto;" />
+                </td>
                 <td>@movie.Title</td>
                 <td>@movie.Description</td>
                 <td>@movie.Rating</td>
                 <td>@movie.Year</td>
+                <td>@movie.ImdbId</td>
                 <td>
-                    <img src="@movie.Image" alt="Movie Image" style="max-width: 100px; max-height: 150px;" />
+                    <a href="@movie.ImdbLink" target="_blank">View on IMDB</a>
                 </td>
                 <td>
-                    <img src="@movie.Thumbnail" alt="Movie Thumbnail" style="max-width: 50px; max-height: 75px;" />
-                </td>
-                <td>
-                    @foreach (var genre in movie.Genres)
+                    @foreach (var movieGenre in movie.MovieGenres)
                     {
-                        <span>@genre.GenreName</span>
-                        @* Türleri listeleme *@
+                        <span>@movieGenre.Genre.GenreName</span>
+                        @if (!movieGenre.Equals(movie.MovieGenres.Last()))
+                        {
+                            <span>, </span>
+                        }
                     }
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@movie.MovieID" class="btn btn-primary">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@movie.MovieID" class="btn btn-danger">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@movie.MovieID">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@movie.MovieID">Delete</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
-<a asp-action="Create" class="btn btn-success">Add New Movie</a>
+<a asp-action="Create" class="btn btn-primary">Create New</a>
+
+@section Scripts {
+    <script>
+        function filterMoviesByGenre(genreId) {
+            const movieRows = document.querySelectorAll('.movieRow');
+            movieRows.forEach(row => {
+                const genres = JSON.parse(row.getAttribute('data-genres'));
+                if (!genres.includes(genreId)) {
+                    row.style.display = 'none';
+                } else {
+                    row.style.display = '';
+                }
+            });
+        }
+    </script>
+}

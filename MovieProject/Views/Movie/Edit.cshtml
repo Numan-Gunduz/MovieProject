@@ -7,7 +7,7 @@
 <h1>Edit Movie</h1>
 
 <form asp-action="Edit">
-    <input type="hidden" asp-for="MovieID" />
+    @Html.HiddenFor(m => m.MovieID)
 
     <div class="form-group">
         <label asp-for="Title"></label>
@@ -34,27 +34,44 @@
     </div>
 
     <div class="form-group">
+        <label asp-for="ImdbId"></label>
+        <input asp-for="ImdbId" class="form-control" />
+        <span asp-validation-for="ImdbId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ImdbLink"></label>
+        <input asp-for="ImdbLink" class="form-control" />
+        <span asp-validation-for="ImdbLink" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label>Genres</label>
+        <select name="selectedGenres" class="form-control" multiple>
+            @foreach (var genre in Model.MovieGenres)
+            {
+                <option value="@genre.Genre.GenreId" selected>@genre.Genre.GenreName</option>
+            }
+        </select>
+        <span asp-validation-for="MovieGenres" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
         <label asp-for="Image"></label>
         <input asp-for="Image" class="form-control" />
         <span asp-validation-for="Image" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="Thumbnail"></label>
-        <input asp-for="Thumbnail" class="form-control" />
-        <span asp-validation-for="Thumbnail" class="text-danger"></span>
+        <label asp-for="BigImage"></label>
+        <input asp-for="BigImage" class="form-control" />
+        <span asp-validation-for="BigImage" class="text-danger"></span>
     </div>
 
     <div class="form-group">
-        <label asp-for="Genres"></label>
-        <select asp-for="Genres" class="form-control" multiple>
-            @* Genre listesi buraya gelecek *@
-            @foreach (var genre in ViewBag.Genres)
-            {
-                <option value="@genre.GenreId">@genre.GenreName</option>
-            }
-        </select>
-        <span asp-validation-for="Genres" class="text-danger"></span>
+        <label asp-for="Thumbnail"></label>
+        <input asp-for="Thumbnail" class="form-control" />
+        <span asp-validation-for="Thumbnail" class="text-danger"></span>
     </div>
 
     <button type="submit" class="btn btn-primary">Save</button>

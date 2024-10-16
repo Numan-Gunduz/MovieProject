@@ -1,0 +1,25 @@
+﻿@model IEnumerable<MovieProject.Models.Movie>
+
+@{
+    ViewBag.Title = "Movies in Genre: " + ViewBag.Genre;
+}
+
+<h1>Movies in Genre: @ViewBag.Genre</h1>
+
+@if (!Model.Any())
+{
+    <p>No movies found in this genre.</p>
+}
+else
+{
+    <ul>
+        @foreach (var movie in Model)
+        {
+            <li>
+                <strong>@movie.Title</strong> (@movie.Year) - Rating: @movie.Rating
+            </li>
+        }
+    </ul>
+}
+
+<a asp-action="Index" class="btn btn-primary">Back to Movies</a>

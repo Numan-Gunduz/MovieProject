@@ -1,11 +1,17 @@
-﻿namespace MovieProject.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace MovieProject.Models
 {
     public class Genre
     {
-        public int GenreId { get; set; } // Tür ID (Primary Key)
-        public string GenreName { get; set; } // Tür adı
+        [Key]
+        public int GenreId { get; set; }
 
-        // İlişki: Bir tür birden fazla filmde olabilir
+        [Required]
+        [StringLength(100)]
+        public string GenreName { get; set; }
+
+        // Bir türün birden fazla filme ait olabileceğini belirtmek için
         public ICollection<MovieGenre> MovieGenres { get; set; } = new List<MovieGenre>();
     }
 }

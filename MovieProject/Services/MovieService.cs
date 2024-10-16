@@ -16,6 +16,31 @@ namespace MovieProject.Services
             _context = context;
         }
 
+        // Tüm filmleri getir
+        public IEnumerable<Movie> GetAllMovies()
+        {
+            return _context.Movies.Include(m => m.MovieGenres).ThenInclude(mg => mg.Genre).ToList();
+        }
+        public Dictionary<string, List<Movie>> GetMoviesByGenres()
+        {
+            // Tüm türleri ve ilişkili filmleri al
+            var genresWithMovies = _context.Genres
+                .Include(g => g.MovieGenres)
+                .ThenInclude(mg => mg.Movie)
+                .ToList();
+
+            // Filmleri türlerine göre gruplandır ve dictionary yapısında döndür
+            var result = new Dictionary<string, List<Movie>>();
+
+            foreach (var genre in genresWithMovies)
+            {
+                result[genre.GenreName] = genre.MovieGenres.Select(mg => mg.Movie).ToList();
+            }
+
+            return result;
+        }
+
+        // Filmleri API'den çekip veritabanına kaydet
         public async Task FetchAndSaveMoviesAsync()
         {
             using (var client = new HttpClient())
@@ -37,17 +62,18 @@ namespace MovieProject.Services
                     var body = await response.Content.ReadAsStringAsync();
                     var movieApiResponses = JsonConvert.DeserializeObject<List<MovieApiResponse>>(body);
 
-                    // Veritabanına kaydet
+                    // Veritabanına kaydetme işlemi
                     foreach (var movieApiResponse in movieApiResponses)
                     {
-                        // Mevcut film olup olmadığını kontrol edin
+                        // IMDb ID'sine göre mevcut film kontrolü
                         var existingMovie = await _context.Movies
-                            .Include(m => m.Genres)
+                            .Include(m => m.MovieGenres)
+                            .ThenInclude(mg => mg.Genre)
                             .FirstOrDefaultAsync(m => m.ImdbId == movieApiResponse.imdbid);
 
                         if (existingMovie != null)
                         {
-                            // Film zaten mevcutsa güncelle
+                            // Film mevcutsa güncelle
                             existingMovie.Rank = movieApiResponse.rank;
                             existingMovie.Title = movieApiResponse.title;
                             existingMovie.Description = movieApiResponse.description;
@@ -59,22 +85,31 @@ namespace MovieProject.Services
                             existingMovie.ImdbLink = movieApiResponse.imdb_link;
 
                             // Türleri güncelle
-                            existingMovie.Genres.Clear();
+                            existingMovie.MovieGenres.Clear();
                             if (movieApiResponse.genre != null)
                             {
-                                foreach (var genreName in movieApiResponse.genre)
+                                foreach (var genreName in movieApiResponse.genre.Distinct()) // Türleri benzersiz yap
                                 {
+                                    // Türün var olup olmadığını kontrol et
                                     var genre = await _context.Genres
                                         .FirstOrDefaultAsync(g => g.GenreName == genreName)
                                         ?? new Genre { GenreName = genreName };
 
-                                    existingMovie.Genres.Add(genre);
+                                    // Türü mevcut değilse ekle
+                                    if (!await _context.Genres.AnyAsync(g => g.GenreName == genre.GenreName))
+                                    {
+                                        _context.Genres.Add(genre);
+                                        await _context.SaveChangesAsync();
+                                    }
+
+                                    // Film ile türü ilişkilendir
+                                    existingMovie.MovieGenres.Add(new MovieGenre { Movie = existingMovie, Genre = genre });
                                 }
                             }
                         }
                         else
                         {
-                            // Film mevcut değilse yeni bir kayıt oluştur
+                            // Mevcut değilse yeni bir film ekle
                             var movie = new Movie
                             {
                                 Rank = movieApiResponse.rank,
@@ -87,19 +122,26 @@ namespace MovieProject.Services
                                 Year = movieApiResponse.year,
                                 ImdbId = movieApiResponse.imdbid,
                                 ImdbLink = movieApiResponse.imdb_link,
-                                Genres = new List<Genre>() // Türler burada eklenebilir
+                                MovieGenres = new List<MovieGenre>() // Türler burada eklenecek
                             };
 
-                            // Türleri ekleyin
+                            // Türleri ekleyin (benzersiz şekilde)
                             if (movieApiResponse.genre != null)
                             {
-                                foreach (var genreName in movieApiResponse.genre)
+                                foreach (var genreName in movieApiResponse.genre.Distinct()) // Benzersiz türleri ekle
                                 {
                                     var genre = await _context.Genres
                                         .FirstOrDefaultAsync(g => g.GenreName == genreName)
                                         ?? new Genre { GenreName = genreName };
 
-                                    movie.Genres.Add(genre);
+                                    // Türü ekle (varsa mevcut olanı kullan)
+                                    if (!await _context.Genres.AnyAsync(g => g.GenreName == genre.GenreName))
+                                    {
+                                        _context.Genres.Add(genre);
+                                        await _context.SaveChangesAsync();
+                                    }
+
+                                    movie.MovieGenres.Add(new MovieGenre { Movie = movie, Genre = genre });
                                 }
                             }
 
@@ -107,12 +149,14 @@ namespace MovieProject.Services
                         }
                     }
 
+                    // Değişiklikleri veritabanına kaydet
                     await _context.SaveChangesAsync();
                 }
             }
         }
     }
 
+    // API'den çekilen veriler için model sınıfı
     public class MovieApiResponse
     {
         public int rank { get; set; }

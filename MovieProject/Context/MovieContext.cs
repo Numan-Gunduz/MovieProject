@@ -15,9 +15,9 @@ namespace MovieProject.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Film ile Tür ilişkisini tanımlama
+            // Movie ve Genre arasındaki çoktan çoğa ilişkiyi ayarlayın
             modelBuilder.Entity<MovieGenre>()
-                .HasKey(mg => new { mg.MovieId, mg.GenreId }); // Anahtarlar
+                .HasKey(mg => new { mg.MovieId, mg.GenreId });
 
             modelBuilder.Entity<MovieGenre>()
                 .HasOne(mg => mg.Movie)

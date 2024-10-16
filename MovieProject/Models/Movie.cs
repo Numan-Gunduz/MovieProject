@@ -18,12 +18,6 @@ namespace MovieProject.Models
         public int? Year { get; set; }
         public string? ImdbId { get; set; }
         public string? ImdbLink { get; set; }
-
-        // Çoktan çoğa ilişki için köprü tablo
         public ICollection<MovieGenre> MovieGenres { get; set; } = new List<MovieGenre>();
-        public ICollection<Genre> Genres { get; set; } = new List<Genre>();
-
-        // Alternatif olarak direkt tür listesi
-        // public ICollection<Genre> Genres { get; set; } = new List<Genre>();
     }
 }
