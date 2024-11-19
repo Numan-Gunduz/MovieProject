@@ -12,19 +12,21 @@ namespace MovieProject.Controllers
     {
         private readonly MovieContext _context;
         private readonly MovieService _movieService;
+        private readonly PostgresFunctionService _functionService;
 
-        public MovieController(MovieContext context, MovieService movieService)
+        public MovieController(MovieContext context, MovieService movieService, PostgresFunctionService functionService)
         {
             _context = context;
             _movieService = movieService;
+            _functionService = functionService;
+            if (!_functionService.FunctionExists("get_movie_count"))
+            {
+                _functionService.CreateFunctionCounter();
+            }
         }
-        //public IActionResult Genres()
-        //{
-        //    var genres = _context.Genres.ToList(); // Tüm türleri getiriyoruz
-        //    return View(genres); // Genre'leri gösterecek bir View
-        //}
 
-        // Belirli bir türe göre filmleri listeleyen action
+        
+
         public IActionResult MoviesByGenre(int genreId)
         {
             // Seçilen türe göre filmleri getir
@@ -52,6 +54,9 @@ namespace MovieProject.Controllers
                 .ToListAsync();
 
             ViewBag.Genres = await _context.Genres.ToListAsync(); // Türleri getiriyoruz
+            var movieCount = _functionService.GetMovieCount();
+            ViewBag.MovieCount = movieCount;
+
             return View(movies);
         }
 

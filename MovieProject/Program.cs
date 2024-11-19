@@ -22,8 +22,10 @@ builder.Services.AddDbContext<MovieContext>(options =>
 builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<MovieService>();
 builder.Services.AddScoped<MovieService>(); // Ekleniyor
+builder.Services.AddScoped<PostgresFunctionService>();
 
 var app = builder.Build();
+
 /*Otomatikmen migration iþlemi yapan kod bloðu */
 using (var scope = app.Services.CreateScope())
 {
