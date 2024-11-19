@@ -40,7 +40,7 @@ namespace MovieProject.Services
             return result;
         }
 
-        // Filmleri API'den çekip veritabanına kaydet
+        //Filmleri API'den çekip veritabanına kaydet
         public async Task FetchAndSaveMoviesAsync()
         {
             using (var client = new HttpClient())
@@ -156,7 +156,7 @@ namespace MovieProject.Services
         }
     }
 
-    // API'den çekilen veriler için model sınıfı
+    //API'den çekilen veriler için model sınıfı
     public class MovieApiResponse
     {
         public int rank { get; set; }

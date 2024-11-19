@@ -18,11 +18,11 @@ namespace MovieProject.Controllers
             _context = context;
             _movieService = movieService;
         }
-        public IActionResult Genres()
-        {
-            var genres = _context.Genres.ToList(); // Tüm türleri getiriyoruz
-            return View(genres); // Genre'leri gösterecek bir View
-        }
+        //public IActionResult Genres()
+        //{
+        //    var genres = _context.Genres.ToList(); // Tüm türleri getiriyoruz
+        //    return View(genres); // Genre'leri gösterecek bir View
+        //}
 
         // Belirli bir türe göre filmleri listeleyen action
         public IActionResult MoviesByGenre(int genreId)
@@ -42,7 +42,7 @@ namespace MovieProject.Controllers
         {
             await _movieService.FetchAndSaveMoviesAsync();
             return RedirectToAction("Index");
-        }
+    }
         // GET: Movies
         public async Task<IActionResult> Index()
         {
@@ -55,11 +55,11 @@ namespace MovieProject.Controllers
             return View(movies);
         }
 
-        public IActionResult MoviesByGenre()
-        {
-            var genresWithMovies = _movieService.GetMoviesByGenres();
-            return View(genresWithMovies);
-        }
+        //public IActionResult MoviesByGenre()
+        //{
+        //    var genresWithMovies = _movieService.GetMoviesByGenres();
+        //    return View(genresWithMovies);
+        //}
 
         // GET: Movies/Create
         public IActionResult Create()

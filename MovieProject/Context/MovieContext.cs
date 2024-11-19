@@ -15,7 +15,8 @@ namespace MovieProject.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Movie ve Genre arasındaki çoktan çoğa ilişkiyi ayarlayın
+
+
             modelBuilder.Entity<MovieGenre>()
                 .HasKey(mg => new { mg.MovieId, mg.GenreId });
 
@@ -28,6 +29,9 @@ namespace MovieProject.Context
                 .HasOne(mg => mg.Genre)
                 .WithMany(g => g.MovieGenres)
                 .HasForeignKey(mg => mg.GenreId);
+
         }
+
+
     }
 }
