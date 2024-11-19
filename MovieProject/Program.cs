@@ -4,9 +4,16 @@ using MovieProject.Services;
 using static System.Formats.Asn1.AsnWriter;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<MovieContext>(options => options.UseSqlServer(
-    builder.Configuration.GetConnectionString("DefaultConnectionString")));
+/*MsSql için konfigürasyon ayarlarý
+*/
+//builder.Services.AddDbContext<MovieContext>(options => options.UseSqlServer(
+//    builder.Configuration.GetConnectionString("DefaultConnectionString")));
 
+/*PostgreSql için konfigürasyon ayarlarý*/
+builder.Services.AddDbContext<MovieContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnectionString")));
+
+/*kullanýcý database ismini girmeden direk otomatik olarak baðlanacak þekilde oluþturulmuþ olan konfigürasyon ayarlarý !!olmadý yetkilendirme ile ilgili problem var !!*/
 //var serverName = Environment.MachineName; // Kullanýcý bilgisayar adýný alýr
 //var connectionString = $"Data Source={serverName}\\SQLEXPRESS;Initial Catalog=FilmApplication;Integrated Security=True;TrustServerCertificate=True;";
 //builder.Services.AddDbContext<MovieContext>(options => options.UseSqlServer(connectionString));
@@ -16,14 +23,14 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpClient<MovieService>();
 builder.Services.AddScoped<MovieService>(); // Ekleniyor
 
-
 var app = builder.Build();
+/*Otomatikmen migration iþlemi yapan kod bloðu */
 using (var scope = app.Services.CreateScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<MovieContext>(); dbContext.Database.Migrate();
-   
+    var dbContext = scope.ServiceProvider.GetRequiredService<MovieContext>();
+    dbContext.Database.Migrate();
 }
-
+/*Otomatikmen migration iþlemi yapan kod bloðu */
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

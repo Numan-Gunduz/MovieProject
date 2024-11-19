@@ -29,6 +29,16 @@ namespace MovieProject.Context
                 .HasOne(mg => mg.Genre)
                 .WithMany(g => g.MovieGenres)
                 .HasForeignKey(mg => mg.GenreId);
+            /*postgresql için eklenen kod satırı*/
+            foreach (var entity in modelBuilder.Model.GetEntityTypes())
+            {
+                foreach (var property in entity.GetProperties().Where(p => p.ClrType == typeof(string)))
+                {
+                    property.SetColumnType("text");
+                }
+            }
+            /*postgresql için eklenen kod satırı*/
+
 
         }
 

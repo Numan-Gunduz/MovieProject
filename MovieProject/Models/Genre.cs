@@ -8,7 +8,6 @@ namespace MovieProject.Models
         public int GenreId { get; set; }
 
         [Required]
-        [StringLength(100)]
         public string GenreName { get; set; }
 
         // Bir türün birden fazla filme ait olabileceğini belirtmek için
