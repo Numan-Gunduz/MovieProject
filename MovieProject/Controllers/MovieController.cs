@@ -19,10 +19,11 @@ namespace MovieProject.Controllers
             _context = context;
             _movieService = movieService;
             _functionService = functionService;
-            if (!_functionService.FunctionExists("get_movie_count"))
-            {
-                _functionService.CreateFunctionCounter();
-            }
+            //if (!_functionService.FunctionExists("get_movie_count"))
+            //{
+            //    _functionService.CreateFunctionCounter();
+            //}
+            _functionService.FilmSayac();
         }
 
         
@@ -36,7 +37,6 @@ namespace MovieProject.Controllers
                 .Select(mg => mg.Movie)
                 .ToList();
 
-            // ViewBag ile tür ismini view'a gönderiyoruz
             ViewBag.Genre = _context.Genres.FirstOrDefault(g => g.GenreId == genreId)?.GenreName;
             return View(movies); // Filmler MoviesByGenre view'ına gönderilecek
         }
@@ -44,7 +44,7 @@ namespace MovieProject.Controllers
         {
             await _movieService.FetchAndSaveMoviesAsync();
             return RedirectToAction("Index");
-    }
+        }
         // GET: Movies
         public async Task<IActionResult> Index()
         {
@@ -54,19 +54,13 @@ namespace MovieProject.Controllers
                 .ToListAsync();
 
             ViewBag.Genres = await _context.Genres.ToListAsync(); // Türleri getiriyoruz
-            var movieCount = _functionService.GetMovieCount();
+            var movieCount = _functionService.GetFilmSayac();
             ViewBag.MovieCount = movieCount;
 
             return View(movies);
         }
 
-        //public IActionResult MoviesByGenre()
-        //{
-        //    var genresWithMovies = _movieService.GetMoviesByGenres();
-        //    return View(genresWithMovies);
-        //}
-
-        // GET: Movies/Create
+    
         public IActionResult Create()
         {
             ViewBag.Genres = _context.Genres.ToList();

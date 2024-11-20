@@ -14,21 +14,21 @@ namespace MovieProject.Controllers
 
         public IActionResult TestFunction()
         {
-            var functionName = "example_function";
+            //var functionName = "example_function";
 
-            // Fonksiyon var mı kontrol et
-            if (!_functionService.FunctionExists(functionName))
-            {
-                _functionService.CreateFunction();
-                ViewBag.Message = "Fonksiyon oluşturuldu.";
-            }
-            else
-            {
-                ViewBag.Message = "Fonksiyon zaten mevcut.";
-            }
+            //// Fonksiyon var mı kontrol et
+            //if (!_functionService.FunctionExists(functionName))
+            //{
+            //    _functionService.CreateFunction();
+            //    ViewBag.Message = "Fonksiyon oluşturuldu.";
+            //}
+            //else
+            //{
+            //    ViewBag.Message = "Fonksiyon zaten mevcut.";
+            //}
 
-            // Fonksiyonu çağır
-            _functionService.CallFunction(functionName);
+            //// Fonksiyonu çağır
+            //_functionService.CallFunction(functionName);
 
             return View();
         }

@@ -12,44 +12,7 @@ namespace MovieProject.Services
             _context = context;
         }
 
-        // Fonksiyon var mı kontrol et
-        public bool FunctionExists(string functionName)
-        {
-            var query = @"
-        SELECT EXISTS (
-            SELECT 1
-            FROM pg_proc
-            WHERE proname = @functionName
-        );
-    ";
-
-            // ExecuteScalar kullanımı daha uygundur
-            using (var command = _context.Database.GetDbConnection().CreateCommand())
-            {
-                command.CommandText = query;
-                command.Parameters.Add(new Npgsql.NpgsqlParameter("functionName", functionName));
-                _context.Database.OpenConnection();
-
-                var result = command.ExecuteScalar();
-                return result != null && (bool)result;
-            }
-        }
-
-        // Fonksiyonu oluştur
-        public void CreateFunction()
-        {
-            var createFunctionQuery = @"
-                CREATE OR REPLACE FUNCTION example_function()
-                RETURNS void AS $$
-                BEGIN
-                    RAISE NOTICE 'Bu, PostgreSQL fonksiyonunun çalıştığını gösterir!';
-                END;
-                $$ LANGUAGE plpgsql;
-            ";
-
-            _context.Database.ExecuteSqlRaw(createFunctionQuery);
-        }
-        public void CreateFunctionCounter()
+        public void FilmSayac()
         {
             var createFunctionQuery = @"
                 CREATE OR REPLACE FUNCTION get_movie_count()
@@ -62,7 +25,7 @@ namespace MovieProject.Services
 
             _context.Database.ExecuteSqlRaw(createFunctionQuery);
         }
-        public int GetMovieCount()
+        public int GetFilmSayac()
         {
             var query = "SELECT get_movie_count();";
 
@@ -75,13 +38,48 @@ namespace MovieProject.Services
                 return result != null ? Convert.ToInt32(result) : 0;
             }
         }
+        //// Fonksiyonu oluştur
+        //public void CreateFunction()
+        //{
+        //    var createFunctionQuery = @"
+        //        CREATE OR REPLACE FUNCTION example_function()
+        //        RETURNS void AS $$
+        //        BEGIN
+        //            RAISE NOTICE 'Bu, PostgreSQL fonksiyonunun çalıştığını gösterir!';
+        //        END;
+        //        $$ LANGUAGE plpgsql;
+        //    ";
 
+        //    _context.Database.ExecuteSqlRaw(createFunctionQuery);
+        //}
 
-        // Fonksiyonu çağır
-        public void CallFunction(string functionName)
-        {
-            var callFunctionQuery = $"SELECT {functionName}();";
-            _context.Database.ExecuteSqlRaw(callFunctionQuery);
-        }
+        //// Fonksiyonu çağır
+        //public void CallFunction(string functionName)
+        //{
+        //    var callFunctionQuery = $"SELECT {functionName}();";
+        //    _context.Database.ExecuteSqlRaw(callFunctionQuery);
+        //}
+        //    // Fonksiyon var mı kontrol et
+        //    public bool FunctionExists(string functionName)
+        //    {
+        //        var query = @"
+        //    SELECT EXISTS (
+        //        SELECT 1
+        //        FROM pg_proc
+        //        WHERE proname = @functionName
+        //    );
+        //";
+
+        //        // ExecuteScalar kullanımı daha uygundur
+        //        using (var command = _context.Database.GetDbConnection().CreateCommand())
+        //        {
+        //            command.CommandText = query;
+        //            command.Parameters.Add(new Npgsql.NpgsqlParameter("functionName", functionName));
+        //            _context.Database.OpenConnection();
+
+        //            var result = command.ExecuteScalar();
+        //            return result != null && (bool)result;
+        //        }
+        //    }
     }
 }
